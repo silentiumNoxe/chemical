@@ -26,7 +26,6 @@ function canvasMoveListener(event) {
         return;
     }
 
-    let mouseDiv = document.querySelector("#mouse #move");
     let rect = this.getBoundingClientRect();
 
     let mouse = {x: (event.clientX - rect.left).toFixed(0), y: (event.clientY - rect.top).toFixed(0)};
@@ -34,17 +33,11 @@ function canvasMoveListener(event) {
     this.camera.x = this.mouseEnd.x;
     this.camera.y = this.mouseEnd.y;
 
-    // mouseDiv.innerHTML =
-    //     `
-    //         <p>MOUSE X: ${this.mouseEnd.x}</p>
-    //         <p>MOUSE Y: ${this.mouseEnd.y}</p>
-    //         <p>CAMERA X: ${this.camera.x}</p>
-    //         <p>CAMERA Y: ${this.camera.y}</p>
-    //     `;
+    document.querySelector("#mouse #asdf").innerHTML = "move.mouse "+JSON.stringify(mouse);
+    document.querySelector("#mouse #final").innerHTML = "move.result "+JSON.stringify(this.camera);
 }
 
 function canvasClickDownListener(event) {
-    // let mouseDiv = document.querySelector("#mouse #clickStart");
     let rect = this.getBoundingClientRect();
     let click = {
         x: (event.clientX - rect.left).toFixed(0),
@@ -54,21 +47,14 @@ function canvasClickDownListener(event) {
         x: ((event.clientX - rect.left).toFixed(0)) - this.camera.x,
         y: ((event.clientY - rect.top).toFixed(0)) - this.camera.y
     };
-    // this.mouseStart = {x: this.camera.x, y: this.camera.y};
-    //
 
-    document.querySelector("#mouse #click").innerHTML = JSON.stringify(click);
-    document.querySelector("#mouse #camera").innerHTML = JSON.stringify(this.camera);
-    document.querySelector("#mouse #result").innerHTML = JSON.stringify(this.mouseStart);
+    document.querySelector("#mouse #click").innerHTML = "click "+JSON.stringify(click);
+    document.querySelector("#mouse #camera").innerHTML = "click.camera "+JSON.stringify(this.camera);
+    document.querySelector("#mouse #result").innerHTML = "click.resultStart"+JSON.stringify(this.mouseStart);
     this.clickStarted = true;
 }
 
-function canvasClickUpListener(event) {
-    let mouseDiv = document.querySelector("#mouse #clickEnd");
-    let rect = this.getBoundingClientRect();
-    let mouse = {x: (event.clientX - rect.left).toFixed(0), y: (event.clientY - rect.top).toFixed(0)};
-    this.mouseEnd = {x: mouse.x - this.mouseStart.x, y: mouse.y - this.mouseStart.y};
-
+function canvasClickUpListener() {
     this.clickStarted = false;
 }
 
