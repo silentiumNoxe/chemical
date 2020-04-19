@@ -10,17 +10,21 @@
     <script src="js/models/entity.js"></script>
 
     <script src="js/index.js"></script>
+
+    <style>
+        #debug{
+            user-select: none;
+        }
+    </style>
 </head>
 <body>
-<p id="time" style="user-select: none"></p>
+<div id="debug">
+    <p id="time"></p>
+    <p id="camera"></p>
+</div>
 <canvas width="1000" height="600" style="border: 1px solid black"></canvas>
 <div id="mouse">
-    <div id="move"></div>
-    <p id="click"></p>
-    <p id="camera"></p>
-    <p id="result"></p>
-    <p id="asdf"></p>
-    <p id="final"></p>
+    <p id="wheel"></p>
 </div>
 </body>
 </html>

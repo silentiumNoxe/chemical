@@ -34,6 +34,8 @@ window.addEventListener("DOMContentLoaded", () => {
         canvas.stroke();
 
         timeElement.innerHTML = String((performance.now() - startTime).toFixed(0)) + " ms";
+        document.querySelector("#debug #camera").innerHTML =
+            `x: ${canvasElement.camera.x} y: ${canvasElement.camera.y} scale: ${canvasElement.camera.scale}`;
     }, 10);
 });
 
