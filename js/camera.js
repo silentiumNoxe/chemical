@@ -1,6 +1,9 @@
 function Camera(canvasElement){
     this.x = 0;
     this.y = 0;
+
+    this.scale = 10;
+
     /** @type HTMLCanvasElement*/this.canvas = canvasElement;
 
     this.canvas.onmousemove = function (event) {
@@ -27,4 +30,19 @@ function Camera(canvasElement){
     this.canvas.onmouseup = this.canvas.onmouseleave = function () {
         this.clickStarted = false;
     };
+
+    let camera = this;
+    this.canvas.onwheel = function (event) {
+        if(event.deltaY > 0){
+            camera.scale++;
+            if(camera.scale > 20){
+                camera.scale = 20;
+            }
+        }else{
+            camera.scale--;
+            if(camera.scale < 1){
+                camera.scale = 1;
+            }
+        }
+    }
 }
