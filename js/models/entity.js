@@ -4,4 +4,6 @@ function Entity(name) {
     this.radius = 1;
 
     this.name = name;
+
+    this.backgroundColor = null;
 }

@@ -11,7 +11,8 @@ window.addEventListener("DOMContentLoaded", () => {
     let canvas = canvasElement.getContext("2d");
 
     let entityArray = factoryEntities([
-        // {name: "H", radius: 10},
+        {name: "H", radius: 10, x: 100, y: 100, backgroundColor: "#bb0300"},
+        {x: 150}
     ]);
 
     let lastLoopTime;
@@ -28,20 +29,27 @@ window.addEventListener("DOMContentLoaded", () => {
         canvas.textAlign = "center";
 
         entityArray.forEach(entity => {
-            entity.x = Math.random() * 1000;
-            entity.y = Math.random() * 1000;
+            // entity.x = Math.random() * 1000;
+            // entity.y = Math.random() * 1000;
 
             canvas.beginPath();
+
+            //draw circle
             canvas.arc((entity.x+camera.x) * scale, (entity.y+camera.y) * scale, entity.radius*scale, 0, 2 * Math.PI);
+            if(entity.backgroundColor != null){
+                canvas.fillStyle = canvas.strokeStyle = entity.backgroundColor;
+                canvas.fill();
+            }
+
+            //inner symbol
             if(entity.name != null && camera.scale > 7) {
+                canvas.fillStyle = "#000";
                 canvas.fillText(entity.name, (entity.x + camera.x) * scale, (entity.y + camera.y) * scale + 4 * (camera.scale / 10));
             }
-            canvas.fill();
+
             canvas.closePath();
             canvas.stroke();
         });
-
-        canvas.stroke();
 
         //debug information
         document.querySelector("#time").innerHTML =
@@ -63,12 +71,8 @@ function factoryEntities(entities) {
     let array = [];
     let buf = {};
     for(let i = 0; i < entities.length; i++){
-        let entity = new Entity();
-        entity.name = buf.name = entities[i].name != null ? entities[i].name : buf.name;
-        entity.x = buf.x = entities[i].x != null ? entities[i].x : buf.x;
-        entity.y = buf.y = entities[i].y != null ? entities[i].y : buf.y;
-        entity.radius = buf.radius = entities[i].radius != null ? entities[i].radius : buf.radius;
-        array.push(entity);
+        buf = Object.assign(buf, entities[i]);
+        array.push(Object.assign(new Entity(), buf));
     }
     return array;
 }
