@@ -11,16 +11,18 @@ window.addEventListener("DOMContentLoaded", () => {
     let canvas = canvasElement.getContext("2d");
 
     let entityArray = factoryEntities([
-        {name: "H", radius: 10},
+        // {name: "H", radius: 10},
     ]);
 
-    let framesCounter = 0;
-
+    let lastLoopTime;
     function loop(){
         let startTime = performance.now();
-        canvas.clearRect(0,0, canvasElement.width, canvasElement.height); //clear canvas
 
-        let scale = camera.scale / 10; //scale index
+        //clear canvas
+        canvas.clearRect(0,0, canvasElement.width, canvasElement.height);
+
+        //scale index
+        let scale = camera.scale / 10;
 
         canvas.font = 10*scale+"px Arial";
         canvas.textAlign = "center";
@@ -31,9 +33,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
             canvas.beginPath();
             canvas.arc((entity.x+camera.x) * scale, (entity.y+camera.y) * scale, entity.radius*scale, 0, 2 * Math.PI);
-            // if(camera.scale > 7) {
-            //     canvas.fillText(entity.name, (entity.x + camera.x) * scale, (entity.y + camera.y) * scale + 4 * (camera.scale / 10));
-            // }
+            if(entity.name != null && camera.scale > 7) {
+                canvas.fillText(entity.name, (entity.x + camera.x) * scale, (entity.y + camera.y) * scale + 4 * (camera.scale / 10));
+            }
             canvas.fill();
             canvas.closePath();
             canvas.stroke();
@@ -41,12 +43,16 @@ window.addEventListener("DOMContentLoaded", () => {
 
         canvas.stroke();
 
+        //debug information
         document.querySelector("#time").innerHTML =
-            String((performance.now() - startTime).toFixed(0)) + " ms";
+            "loop "+String((performance.now() - startTime).toFixed(0)) + " ms FPS: "+(1000/(startTime-lastLoopTime)).toFixed(0);
+        lastLoopTime = startTime;
+
         document.querySelector("#debug #camera").innerHTML =
-            `x: ${camera.x} y: ${camera.y} scale: ${camera.scale}`;
+            `camera x: ${camera.x} y: ${camera.y} scale: ${camera.scale}`;
         document.querySelector("#debug #entities").innerHTML = "entities: "+entityArray.length;
 
+        //next frame
         window.requestAnimationFrame(loop);
     }
 
