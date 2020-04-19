@@ -1,41 +1,54 @@
 window.addEventListener("DOMContentLoaded", () => {
     let canvasElement = document.querySelector("canvas");
-    canvasElement.camera = new Camera(canvasElement);
+    let camera = new Camera(canvasElement);
+    canvasElement.camera = camera;
 
     let canvas = canvasElement.getContext("2d");
     let timeElement = document.querySelector("#time");
 
-    let entity1 = new Entity();
-    entity1.x = 50;
-    entity1.y = 50;
-    entity1.radius = 20;
-
-    let entity2 = new Entity();
-    entity2.x = 50;
-    entity2.y = 150;
-    entity2.radius = 20;
+    let entityArray = factoryEntities([
+        {name: "H", x: 50, y: 50, radius: 10},
+        {x: 80, y: 50}
+    ]);
 
     setInterval(() => {
         let startTime = performance.now();
-        canvas.clearRect(0,0, canvasElement.width, canvasElement.height);
+        canvas.clearRect(0,0, canvasElement.width, canvasElement.height); //clear canvas
 
-        let scale = canvasElement.camera.scale / 10;
+        let scale = camera.scale / 10; //scale index
 
-        canvas.beginPath();
-        canvas.arc((entity1.x+canvasElement.camera.x) * scale, (entity1.y+canvasElement.camera.y) * scale, entity1.radius*scale, 0, 6);
-        canvas.fill();
-        canvas.closePath();
+        canvas.font = 10*scale+"px Arial";
+        canvas.textAlign = "center";
 
-        canvas.beginPath();
-        canvas.arc((entity2.x+canvasElement.camera.x) * scale, (entity2.y+canvasElement.camera.y) * scale, entity2.radius*scale, 0, 6);
-        canvas.fill();
-        canvas.closePath();
+        entityArray.forEach(entity => {
+            canvas.beginPath();
+            canvas.arc((entity.x+camera.x) * scale, (entity.y+camera.y) * scale, entity.radius*scale, 0, 2 * Math.PI);
+            if(camera.scale > 7) {
+                canvas.fillText(entity.name, (entity.x + camera.x) * scale, (entity.y + camera.y) * scale + 4 * (camera.scale / 10));
+            }
+            canvas.closePath();
+            canvas.stroke();
+        });
 
         canvas.stroke();
 
         timeElement.innerHTML = String((performance.now() - startTime).toFixed(0)) + " ms";
         document.querySelector("#debug #camera").innerHTML =
-            `x: ${canvasElement.camera.x} y: ${canvasElement.camera.y} scale: ${canvasElement.camera.scale}`;
+            `x: ${camera.x} y: ${camera.y} scale: ${camera.scale}`;
     }, 10);
 });
+
+function factoryEntities(entities) {
+    let array = [];
+    let buf = {};
+    for(let i = 0; i < entities.length; i++){
+        let entity = new Entity();
+        entity.name = buf.name = entities[i].name != null ? entities[i].name : buf.name;
+        entity.x = buf.x = entities[i].x != null ? entities[i].x : buf.x;
+        entity.y = buf.y = entities[i].y != null ? entities[i].y : buf.y;
+        entity.radius = buf.radius = entities[i].radius != null ? entities[i].radius : buf.radius;
+        array.push(entity);
+    }
+    return array;
+}
 

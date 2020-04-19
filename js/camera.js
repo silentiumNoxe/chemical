@@ -2,7 +2,9 @@ function Camera(canvasElement){
     this.x = 0;
     this.y = 0;
 
-    this.scale = 10;
+    this.scale = 50;
+    let scaleMax = 100;
+    let scaleMin = 1;
 
     /** @type HTMLCanvasElement*/this.canvas = canvasElement;
 
@@ -36,13 +38,13 @@ function Camera(canvasElement){
     this.canvas.onwheel = function (event) {
         if(event.deltaY > 0){
             camera.scale++;
-            if(camera.scale > 20){
-                camera.scale = 20;
+            if(camera.scale > scaleMax){
+                camera.scale = scaleMax;
             }
         }else{
             camera.scale--;
-            if(camera.scale < 1){
-                camera.scale = 1;
+            if(camera.scale < scaleMin){
+                camera.scale = scaleMin;
             }
         }
     }
