@@ -12,17 +12,28 @@
     <script src="js/index.js"></script>
 
     <style>
+        body{
+            overflow: hidden;
+        }
+
+        canvas{
+            top: 0;
+            left: 0;
+            position: absolute;
+        }
+
         #debug{
             user-select: none;
         }
     </style>
 </head>
 <body>
+<canvas></canvas>
 <div id="debug">
     <p id="time"></p>
     <p id="camera"></p>
+    <p id="entities"></p>
 </div>
-<canvas width="1000" height="600" style="border: 1px solid black"></canvas>
 <div id="mouse">
     <p id="wheel"></p>
 </div>
