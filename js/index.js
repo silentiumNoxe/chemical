@@ -1,3 +1,5 @@
+window.FBFMode = false;//frame-by-frame
+
 window.addEventListener("DOMContentLoaded", () => {
     let canvasElement = document.querySelector("canvas");
     canvasElement.width = window.innerWidth;
@@ -52,13 +54,13 @@ window.addEventListener("DOMContentLoaded", () => {
         });
 
         //debug information
-        document.querySelector("#time").innerHTML =
-            "loop "+String((performance.now() - startTime).toFixed(0)) + " ms FPS: "+(1000/(startTime-lastLoopTime)).toFixed(0);
+        innerHTML("#time").set("loop "+String((performance.now() - startTime).toFixed(0)) + " ms FPS: "+
+            (1000/(startTime-lastLoopTime)).toFixed(0));
+
         lastLoopTime = startTime;
 
-        document.querySelector("#debug #camera").innerHTML =
-            `camera x: ${camera.x} y: ${camera.y} scale: ${camera.scale}`;
-        document.querySelector("#debug #entities").innerHTML = "entities: "+entityArray.length;
+        innerHTML("#camera").set(`camera x: ${camera.x} y: ${camera.y} scale: ${camera.scale}`);
+        innerHTML("#entities").set("entities: "+entityArray.length);
 
         //next frame
         window.requestAnimationFrame(loop);
@@ -77,3 +79,17 @@ function factoryEntities(entities) {
     return array;
 }
 
+function nextFrame() {
+
+}
+
+function innerHTML(selector) {
+    return {
+        append(html){
+            document.querySelector(selector).innerHTML += html;
+        },
+        set(html){
+            document.querySelector(selector).innerHTML = html;
+        }
+    }
+}
