@@ -19,6 +19,7 @@
             top: 0;
             left: 0;
             position: absolute;
+            z-index: -1;
         }
 
         #debug{
@@ -27,17 +28,14 @@
     </style>
 </head>
 <body>
-<canvas></canvas>
 <div id="debug">
     <p id="time"></p>
     <p id="camera"></p>
     <p id="entities"></p>
     <p id="date"></p>
-    <button onclick="window.FBFMode = !window.FBFMode;">FBF</button>
-    <button onclick="nextFrame()" hidden>next frame</button>
+    <button id="fbfMode" onclick="switchFBF(this)">FBF</button>
+    <button id="nextFrame" onclick="nextFrame()" hidden>next frame</button>
 </div>
-<div id="mouse">
-    <p id="wheel"></p>
-</div>
+<canvas></canvas>
 </body>
 </html>

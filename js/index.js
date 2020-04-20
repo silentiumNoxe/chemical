@@ -63,7 +63,9 @@ window.addEventListener("DOMContentLoaded", () => {
         innerHTML("#entities").set("entities: "+entityArray.length);
 
         //next frame
-        window.requestAnimationFrame(loop);
+        // if(!window.FBFMode) {
+            window.requestAnimationFrame(loop);
+        // }
     }
 
     window.requestAnimationFrame(loop);
@@ -80,7 +82,22 @@ function factoryEntities(entities) {
 }
 
 function nextFrame() {
+    //TODO: implements
+}
 
+function switchFBF(button) {
+    if(window.FBFMode == null){
+        window.FBFMode = false;
+    }
+    window.FBFMode = !window.FBFMode;
+
+    if(window.FBFMode){
+        button.style.backgroundColor = "green";
+        document.querySelector("#nextFrame").hidden = false;
+    }else{
+        button.style.backgroundColor = "red";
+        document.querySelector("#nextFrame").hidden = true;
+    }
 }
 
 function innerHTML(selector) {
