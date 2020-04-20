@@ -34,6 +34,8 @@ function loop() {
     canvas.font = 10*scale+"px Arial";
     canvas.textAlign = "center";
 
+    let sumLife = 0;
+
     for(let i = 0; i < window.entityArray.length; i++){
         /** @type Entity*/let entity = window.entityArray[i];
 
@@ -60,19 +62,20 @@ function loop() {
         entity.move();
 
         if(entity.x > window.border.x || entity.y > window.border.y){
-            entityArray.splice(i, 1);
+            window.entityArray.splice(i, 1);
         }
 
         if(entity.x < 0 || entity.y < 0){
-            entityArray.splice(i, 1);
+            window.entityArray.splice(i, 1);
         }
 
         // entity.setAngle(entity.angle+2);
-        // if(entity.age === 0){
-        //     entityArray.splice(i,  1);
-        // }else {
-        //     entity.age--;
-        // }
+        if(entity.age === 0){
+            entityArray.splice(i,  1);
+        }else {
+            entity.age--;
+            sumLife += entity.age;
+        }
 
         // collide(entity);
     }
@@ -85,7 +88,8 @@ function loop() {
 
     innerHTML("#camera").set(`camera x: ${camera.x} y: ${camera.y} scale: ${camera.scale}`);
     innerHTML("#entities").set("entities: "+window.entityArray.length);
-    console.dir(entityArray);
+    // console.dir(entityArray);
+    innerHTML("#avrLife").set("average life: "+Math.floor(sumLife/entityArray.length));
 
     // innerHTML("#en1").set(JSON.stringify(entityArray[0]));
     // innerHTML("#en2").set(JSON.stringify(entityArray[1]));
@@ -109,73 +113,6 @@ function generateRandomEntities(max) {
         entity.radius = Math.floor(Math.random() * (100 - 20) + 20);
         window.entityArray.push(entity);
     }
-}
-
-/**
- * @param en1 {Entity}
- * @param en2 {Entity}
- * */
-function hitTestEntity(en1, en2) {
-    let dx = Math.floor(en1.x - en2.x);
-    let dy = Math.floor(en1.y - en2.y);
-    let distance = Math.floor(dx*dx + dy*dy);
-    let a = (en1.radius + en2.radius) * (en1.radius + en2.radius);
-    let res = distance <= a;
-
-    // innerHTML("#collision").set("dis: "+distance+" a: "+a+" res: "+res);
-    return res;
-}
-
-function collide(entity) {
-    for(let k = 0; k < entityArray.length; k++){
-        let testEntity = entityArray[k];
-        if(testEntity === entity) continue;
-        if(hitTestEntity(entity, testEntity)){
-            collideEntities(entity, testEntity);
-        }
-    }
-}
-
-function collideEntities(en1, en2) {
-    let dx = Math.floor(en1.nextX - en2.nextX);
-    let dy = Math.floor(en1.nextY - en2.nextY);
-
-    let collisionAngle = Math.atan2(dy, dx);
-
-    let speed1 = Math.sqrt(en1.velocityX * en1.velocityX +
-        en1.velocityY * en1.velocityY);
-    let speed2 = Math.sqrt(en2.velocityX * en2.velocityX +
-        en2.velocityY * en2.velocityY);
-
-    let direction1 = Math.atan2(en1.velocityY, en1.velocityX);
-    let direction2 = Math.atan2(en2.velocityY, en2.velocityX);
-
-    let velocityx_1 = speed1 * Math.cos(direction1 - collisionAngle);
-    let velocityy_1 = speed1 * Math.sin(direction1 - collisionAngle);
-    let velocityx_2 = speed2 * Math.cos(direction2 - collisionAngle);
-    let velocityy_2 = speed2 * Math.sin(direction2 - collisionAngle);
-
-    let final_velocityx_1 = ((en1.mass - en2.mass) * velocityx_1 +
-        (en2.mass + en2.mass) * velocityx_2)/(en1.mass + en2.mass);
-    let final_velocityx_2 = ((en1.mass + en1.mass) * velocityx_1 +
-        (en2.mass - en1.mass) * velocityx_2)/(en1.mass + en2.mass);
-
-    let final_velocityy_1 = velocityy_1;
-    let final_velocityy_2 = velocityy_2;
-
-    en1.velocityX = Math.cos(collisionAngle) * final_velocityx_1 +
-        Math.cos(collisionAngle + Math.PI/2) * final_velocityy_1;
-    en1.velocityY = Math.sin(collisionAngle) * final_velocityx_1 +
-        Math.sin(collisionAngle + Math.PI/2) * final_velocityy_1;
-    en2.velocityX = Math.cos(collisionAngle) * final_velocityx_2 +
-        Math.cos(collisionAngle + Math.PI/2) * final_velocityy_2;
-    en2.velocityY = Math.sin(collisionAngle) * final_velocityx_2 +
-        Math.sin(collisionAngle + Math.PI/2) * final_velocityy_2;
-
-    en1.setNextX(en1.nextX += en1.velocityX);
-    en1.setNextY(en1.nextY += en1.velocityY);
-    en2.setNextX(en2.nextX += en2.velocityX);
-    en2.setNextY(en2.nextY += en2.velocityY);
 }
 
 function factoryEntities(entities) {

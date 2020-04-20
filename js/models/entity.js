@@ -13,7 +13,7 @@ function Entity(name) {
 
     this.backgroundColor = null;
 
-    this.age = 1000;
+    this.age = 50000;
 }
 
 Entity.prototype.move = function () {
@@ -21,18 +21,10 @@ Entity.prototype.move = function () {
     this.velocityX = Math.cos(radians) * this.speed;
     this.velocityY = Math.sin(radians) * this.speed;
 
-    collide(this);
+    collision(this);
 
     this.nextX = (this.x += this.velocityX);
     this.nextY = (this.y += this.velocityY);
-};
-
-Entity.prototype.collideWith = function (target) {
-    let speed1 = Math.sqrt(Math.pow(this.velocityX, 2) + Math.pow(this.velocityY, 2));
-    let speed2 = Math.sqrt(Math.pow(target.velocityX, 2) + Math.pow(target.velocityY, 2));
-
-    let direction1 = Math.atan2(this.velocityX, this.velocityY);
-    let direction2 = Math.atan2(target.velocityX, target.velocityY);
 };
 
 Entity.prototype.setX = function (val) {
@@ -63,3 +55,67 @@ Entity.prototype.setAngle = function (val) {
 
     this.angle = val;
 };
+
+Entity.prototype.checkCollisionWith = function (target) {
+    let dx = Math.floor(this.x - target.x);
+    let dy = Math.floor(this.y - target.y);
+    let distance = Math.floor(dx*dx + dy*dy);
+    let a = (this.radius + target.radius) * (this.radius + target.radius);
+    return distance <= a;
+};
+
+Entity.prototype.doCollision = function (target) {
+    this.speed = target.speed = 0;
+};
+
+function collision(entity) {
+    for(let k = 0; k < entityArray.length; k++){
+        let testEntity = entityArray[k];
+        if(testEntity === entity) continue;
+        if(entity.checkCollisionWith(testEntity)){
+            entity.doCollision(testEntity);
+        }
+    }
+}
+
+function collideEntities(en1, en2) {
+    let dx = Math.floor(en1.nextX - en2.nextX);
+    let dy = Math.floor(en1.nextY - en2.nextY);
+
+    let collisionAngle = Math.atan2(dy, dx);
+
+    let speed1 = Math.sqrt(en1.velocityX * en1.velocityX +
+        en1.velocityY * en1.velocityY);
+    let speed2 = Math.sqrt(en2.velocityX * en2.velocityX +
+        en2.velocityY * en2.velocityY);
+
+    let direction1 = Math.atan2(en1.velocityY, en1.velocityX);
+    let direction2 = Math.atan2(en2.velocityY, en2.velocityX);
+
+    let velocityx_1 = speed1 * Math.cos(direction1 - collisionAngle);
+    let velocityy_1 = speed1 * Math.sin(direction1 - collisionAngle);
+    let velocityx_2 = speed2 * Math.cos(direction2 - collisionAngle);
+    let velocityy_2 = speed2 * Math.sin(direction2 - collisionAngle);
+
+    let final_velocityx_1 = ((en1.mass - en2.mass) * velocityx_1 +
+        (en2.mass + en2.mass) * velocityx_2)/(en1.mass + en2.mass);
+    let final_velocityx_2 = ((en1.mass + en1.mass) * velocityx_1 +
+        (en2.mass - en1.mass) * velocityx_2)/(en1.mass + en2.mass);
+
+    let final_velocityy_1 = velocityy_1;
+    let final_velocityy_2 = velocityy_2;
+
+    en1.velocityX = Math.cos(collisionAngle) * final_velocityx_1 +
+        Math.cos(collisionAngle + Math.PI/2) * final_velocityy_1;
+    en1.velocityY = Math.sin(collisionAngle) * final_velocityx_1 +
+        Math.sin(collisionAngle + Math.PI/2) * final_velocityy_1;
+    en2.velocityX = Math.cos(collisionAngle) * final_velocityx_2 +
+        Math.cos(collisionAngle + Math.PI/2) * final_velocityy_2;
+    en2.velocityY = Math.sin(collisionAngle) * final_velocityx_2 +
+        Math.sin(collisionAngle + Math.PI/2) * final_velocityy_2;
+
+    en1.setNextX(en1.nextX += en1.velocityX);
+    en1.setNextY(en1.nextY += en1.velocityY);
+    en2.setNextX(en2.nextX += en2.velocityX);
+    en2.setNextY(en2.nextY += en2.velocityY);
+}
