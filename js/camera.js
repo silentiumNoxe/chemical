@@ -2,7 +2,7 @@ function Camera(canvasElement){
     this.x = 0;
     this.y = 0;
 
-    this.scale = 50;
+    this.scale = 1;
 
     let scaleMax = 100;
     let scaleMin = 1;

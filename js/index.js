@@ -1,5 +1,5 @@
 window.FBFMode = false;//frame-by-frame
-window.border = {x: 2000, y: 2000};
+window.border = {x: 5000, y: 5000};
 
 window.addEventListener("DOMContentLoaded", () => {
     let canvasElement = document.querySelector("canvas");
@@ -7,12 +7,13 @@ window.addEventListener("DOMContentLoaded", () => {
     canvasElement.height = window.innerHeight;
 
     window.camera = new Camera(canvasElement);
-    window.camera.scale = 10;
+    window.camera.x = 3000;
+    window.camera.y = 2000;
 
     window.entityArray = [];
     // /** @type Entity[]*/window.entityArray = factoryEntities([
-    //     {name: "H", radius: 20, x: 200, y: 200, backgroundColor: "white", speed: 2, angle: 60},
-    //     {x: 250, angle: 90}
+    //     {name: "H", radius: 100, x: 200, y: 200, backgroundColor: "white", speed: 1, angle: 60},
+    //     {x: 450, angle: 90}
     // ]);
 
     window.requestAnimationFrame(loop);
@@ -35,7 +36,6 @@ function loop() {
 
     for(let i = 0; i < window.entityArray.length; i++){
         /** @type Entity*/let entity = window.entityArray[i];
-        // let previousEntity = i-1 < 0 ? entityArray[entityArray.length - 1] : entityArray[i-1];
 
         canvas.beginPath();
 
@@ -63,10 +63,19 @@ function loop() {
             entityArray.splice(i, 1);
         }
 
-        entity.setAngle(entity.angle+2);
-    }
+        if(entity.x < 0 || entity.y < 0){
+            entityArray.splice(i, 1);
+        }
 
-    collide();
+        // entity.setAngle(entity.angle+2);
+        // if(entity.age === 0){
+        //     entityArray.splice(i,  1);
+        // }else {
+        //     entity.age--;
+        // }
+
+        // collide(entity);
+    }
 
     //debug information
     let fps = window.FBFMode ? "FBF" : (1000/(startTime-window.lastLoopTime)).toFixed(0);
@@ -76,11 +85,12 @@ function loop() {
 
     innerHTML("#camera").set(`camera x: ${camera.x} y: ${camera.y} scale: ${camera.scale}`);
     innerHTML("#entities").set("entities: "+window.entityArray.length);
+    console.dir(entityArray);
 
     // innerHTML("#en1").set(JSON.stringify(entityArray[0]));
     // innerHTML("#en2").set(JSON.stringify(entityArray[1]));
 
-    generateRandomEntities(500);
+    generateRandomEntities(document.querySelector("#quantityEntities").value);
 
     //next frame
     if(!window.FBFMode) {
@@ -91,12 +101,12 @@ function loop() {
 function generateRandomEntities(max) {
     while (window.entityArray.length < max){
         let entity = new Entity();
-        entity.x = (Math.random() * window.border.x);
-        entity.y = (Math.random() * window.border.y);
+        entity.x = Math.floor(Math.random() * window.border.x);
+        entity.y = Math.floor(Math.random() * window.border.y);
         entity.backgroundColor = "white";
-        entity.speed = Math.random() * 10;
-        entity.angle = Math.random() * 360;
-        entity.radius = Math.random() * 30;
+        entity.speed = Math.floor(Math.random() * 10);
+        entity.angle = Math.floor(Math.random() * 360);
+        entity.radius = Math.floor(Math.random() * (100 - 20) + 20);
         window.entityArray.push(entity);
     }
 }
@@ -106,31 +116,29 @@ function generateRandomEntities(max) {
  * @param en2 {Entity}
  * */
 function hitTestEntity(en1, en2) {
-    let dx = en1.nextX - en2.nextX;
-    let dy = en1.nextY - en2.nextY;
-    let distance = (dx*dx + dy*dy);
+    let dx = Math.floor(en1.x - en2.x);
+    let dy = Math.floor(en1.y - en2.y);
+    let distance = Math.floor(dx*dx + dy*dy);
+    let a = (en1.radius + en2.radius) * (en1.radius + en2.radius);
+    let res = distance <= a;
 
-    let res = distance <= Math.pow(en1.radius + en2.radius, 2);
-    // console.log(res, distance, Math.pow(en1.radius + en2.radius, 2));
-    // innerHTML("#collision").set("dis: "+distance+" a: "+Math.pow(en1.radius + en2.radius, 2)+" res: "+res);
+    // innerHTML("#collision").set("dis: "+distance+" a: "+a+" res: "+res);
     return res;
 }
 
-function collide() {
-    for(let i = 0; i < entityArray.length; i++){
-        let entity = entityArray[i];
-        for(let k = 0; k < entityArray.length; k++){
-            let testEntity = entityArray[k];
-            if(hitTestEntity(entity, testEntity)){
-                collideEntities(entity, testEntity);
-            }
+function collide(entity) {
+    for(let k = 0; k < entityArray.length; k++){
+        let testEntity = entityArray[k];
+        if(testEntity === entity) continue;
+        if(hitTestEntity(entity, testEntity)){
+            collideEntities(entity, testEntity);
         }
     }
 }
 
 function collideEntities(en1, en2) {
-    let dx = en1.nextX - en2.nextX;
-    let dy = en1.nextY - en2.nextY;
+    let dx = Math.floor(en1.nextX - en2.nextX);
+    let dy = Math.floor(en1.nextY - en2.nextY);
 
     let collisionAngle = Math.atan2(dy, dx);
 

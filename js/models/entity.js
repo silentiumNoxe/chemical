@@ -12,12 +12,16 @@ function Entity(name) {
     this.name = name;
 
     this.backgroundColor = null;
+
+    this.age = 1000;
 }
 
 Entity.prototype.move = function () {
     let radians = this.angle * Math.PI / 180;
     this.velocityX = Math.cos(radians) * this.speed;
     this.velocityY = Math.sin(radians) * this.speed;
+
+    collide(this);
 
     this.nextX = (this.x += this.velocityX);
     this.nextY = (this.y += this.velocityY);
