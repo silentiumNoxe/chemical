@@ -8,9 +8,9 @@ window.addEventListener("DOMContentLoaded", () => {
     window.camera = new Camera(canvasElement);
     window.camera.scale = 10;
 
-    window.entityArray = factoryEntities([
-        {name: "H", radius: 10, x: 100, y: 100, backgroundColor: "#bb0300"},
-        {x: 150}
+    /** @type Entity[]*/window.entityArray = factoryEntities([
+        {name: "H", radius: 10, x: 100, y: 100, backgroundColor: "#bb0300", speed: 1, angle: 57},
+        {x: 150, speed: 1, angle: 90}
     ]);
 
     window.requestAnimationFrame(loop);
@@ -31,9 +31,9 @@ function loop() {
     canvas.font = 10*scale+"px Arial";
     canvas.textAlign = "center";
 
-    window.entityArray.forEach(entity => {
-        // entity.x = Math.random() * 1000;
-        // entity.y = Math.random() * 1000;
+    for(let i = 0; i < entityArray.length; i++){
+        /** @type Entity*/let entity = entityArray[i];
+        // let previousEntity = i-1 < 0 ? entityArray[entityArray.length - 1] : entityArray[i-1];
 
         canvas.beginPath();
 
@@ -52,7 +52,13 @@ function loop() {
 
         canvas.closePath();
         canvas.stroke();
-    });
+
+        entity.move();
+        entity.angle += 5;
+        if(entity.angle > 360){
+            entity.angle = 0;
+        }
+    }
 
     //debug information
     let fps = window.FBFMode ? "FBF" : (1000/(startTime-window.lastLoopTime)).toFixed(0);

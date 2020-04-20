@@ -25,6 +25,10 @@
         #debug{
             user-select: none;
         }
+
+        #fbfMode{
+            background-color: red;
+        }
     </style>
 </head>
 <body>
@@ -35,6 +39,8 @@
     <p id="date"></p>
     <button id="fbfMode" onclick="switchFBF(this)">FBF</button>
     <button id="nextFrame" onclick="nextFrame()" hidden>next frame</button>
+
+    <p id="distance"></p>
 </div>
 <canvas></canvas>
 </body>

@@ -12,16 +12,17 @@ function Camera(canvasElement){
     let camera = this;
     let mouseStart = {};
     let clickStarted = false;
+    let mouse = {};
+    let mouseMoveEvent = {};
     this.canvas.onmousemove = function (event) {
-        if(!clickStarted){
-            return;
-        }
-
         let rect = this.getBoundingClientRect();
-        let mouse = {x: (event.clientX - rect.left).toFixed(0), y: (event.clientY - rect.top).toFixed(0)};
-        let mouseEnd = {x: mouse.x - mouseStart.x, y: mouse.y - mouseStart.y};
-        camera.x = mouseEnd.x;
-        camera.y = mouseEnd.y;
+        mouse = {x: (event.clientX - rect.left).toFixed(0), y: (event.clientY - rect.top).toFixed(0)};
+        mouseMoveEvent = {clientX: event.clientX, clientY: event.clientY};
+
+        if(clickStarted){
+            camera.x = mouse.x - mouseStart.x;
+            camera.y = mouse.y - mouseStart.y;
+        }
     };
 
     this.canvas.onmousedown = function (event) {
@@ -50,5 +51,10 @@ function Camera(canvasElement){
                 camera.scale = scaleMin;
             }
         }
+
+        clickStarted = true;
+        camera.canvas.onmousedown(mouseMoveEvent);
+        camera.canvas.onmousemove(mouseMoveEvent);
+        clickStarted = false;
     }
 }
