@@ -9,33 +9,35 @@ function Camera(canvasElement){
 
     /** @type HTMLCanvasElement*/this.canvas = canvasElement;
 
-    let canvas = this.canvas;
+    let camera = this;
+    let mouseStart = {};
+    let clickStarted = false;
     this.canvas.onmousemove = function (event) {
-        if(!canvas.clickStarted){
+        if(!clickStarted){
             return;
         }
 
         let rect = this.getBoundingClientRect();
         let mouse = {x: (event.clientX - rect.left).toFixed(0), y: (event.clientY - rect.top).toFixed(0)};
-        canvas.mouseEnd = {x: mouse.x - canvas.mouseStart.x, y: mouse.y - canvas.mouseStart.y};
-        canvas.camera.x = canvas.mouseEnd.x;
-        canvas.camera.y = canvas.mouseEnd.y;
+        let mouseEnd = {x: mouse.x - mouseStart.x, y: mouse.y - mouseStart.y};
+        camera.x = mouseEnd.x;
+        camera.y = mouseEnd.y;
     };
 
     this.canvas.onmousedown = function (event) {
         let rect = this.getBoundingClientRect();
-        canvas.mouseStart = {
-            x: ((event.clientX - rect.left).toFixed(0)) - canvas.camera.x,
-            y: ((event.clientY - rect.top).toFixed(0)) - canvas.camera.y
+        mouseStart = {
+            x: ((event.clientX - rect.left).toFixed(0)) - camera.x,
+            y: ((event.clientY - rect.top).toFixed(0)) - camera.y
         };
-        canvas.clickStarted = true;
+        clickStarted = true;
     };
 
     this.canvas.onmouseup = this.canvas.onmouseleave = function () {
-        canvas.clickStarted = false;
+        clickStarted = false;
     };
 
-    let camera = this;
+    
     this.canvas.onwheel = function (event) {
         if(event.deltaY > 0){
             camera.scale++;
