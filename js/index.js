@@ -1,5 +1,5 @@
 window.FBFMode = false;//frame-by-frame
-window.border = {x: 5000, y: 5000};
+window.border = {x: 10000, y: 5000};
 
 window.addEventListener("DOMContentLoaded", () => {
     let canvasElement = document.querySelector("canvas");
@@ -11,10 +11,10 @@ window.addEventListener("DOMContentLoaded", () => {
     window.camera.y = 2000;
 
     window.entityArray = [];
-    // /** @type Entity[]*/window.entityArray = factoryEntities([
-    //     {name: "H", radius: 100, x: 200, y: 200, backgroundColor: "white", speed: 1, angle: 60},
-    //     {x: 450, angle: 90}
-    // ]);
+    /** @type Entity[]*/window.entityArray = factoryEntities([
+        {name: "H", radius: 100, position: new Position(300, 200), backgroundColor: "white", speed: 3, angle: 60},
+        {angle: 90, position: new Position(400, 200)}
+    ]);
 
     window.requestAnimationFrame(loop);
 });
@@ -42,7 +42,7 @@ function loop() {
         canvas.beginPath();
 
         //draw circle
-        canvas.arc((entity.x+window.camera.x) * scale, (entity.y+window.camera.y) * scale, entity.radius*scale, 0, 2 * Math.PI);
+        canvas.arc((entity.position.x+window.camera.x) * scale, (entity.position.y+window.camera.y) * scale, entity.radius*scale, 0, 2 * Math.PI);
         if(entity.backgroundColor != null){
             canvas.fillStyle = canvas.strokeStyle = entity.backgroundColor;
             if(canvas.strokeStyle === "#fff" || canvas.strokeStyle === "#ffffff" || canvas.strokeStyle === "white")
@@ -61,11 +61,11 @@ function loop() {
 
         entity.move();
 
-        if(entity.x > window.border.x || entity.y > window.border.y){
+        if(entity.position.x > window.border.x || entity.position.y > window.border.y){
             window.entityArray.splice(i, 1);
         }
 
-        if(entity.x < 0 || entity.y < 0){
+        if(entity.position.x < 0 || entity.position.y < 0){
             window.entityArray.splice(i, 1);
         }
 
@@ -108,7 +108,7 @@ function generateRandomEntities(max) {
         entity.x = Math.floor(Math.random() * window.border.x);
         entity.y = Math.floor(Math.random() * window.border.y);
         entity.backgroundColor = "white";
-        entity.speed = Math.floor(Math.random() * 10);
+        entity.speed = Math.floor(Math.random() * 20);
         entity.angle = Math.floor(Math.random() * 360);
         entity.radius = Math.floor(Math.random() * (100 - 20) + 20);
         window.entityArray.push(entity);

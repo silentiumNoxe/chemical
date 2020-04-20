@@ -1,6 +1,6 @@
 function Entity(name) {
-    this.x = 0;
-    this.y = 0;
+    this.position = null;
+
     this.nextX = this.x;
     this.nextY = this.y;
 
@@ -13,18 +13,16 @@ function Entity(name) {
 
     this.backgroundColor = null;
 
-    this.age = 50000;
+    this.age = 2000;
 }
 
 Entity.prototype.move = function () {
-    let radians = this.angle * Math.PI / 180;
-    this.velocityX = Math.cos(radians) * this.speed;
-    this.velocityY = Math.sin(radians) * this.speed;
+    this.vector = Vector.from(this.angle, this.speed);
 
-    collision(this);
+    // collision(this);
 
-    this.nextX = (this.x += this.velocityX);
-    this.nextY = (this.y += this.velocityY);
+    this.position =
+        new Position(this.position.x+this.vector.direction.x, this.position.y+this.vector.direction.y);
 };
 
 Entity.prototype.setX = function (val) {
@@ -57,15 +55,32 @@ Entity.prototype.setAngle = function (val) {
 };
 
 Entity.prototype.checkCollisionWith = function (target) {
-    let dx = Math.floor(this.x - target.x);
-    let dy = Math.floor(this.y - target.y);
-    let distance = Math.floor(dx*dx + dy*dy);
+    let distance = this.position.distanceTo(target.position);
+
+    innerHTML("#en1").set(this.angle +" "+distance);
     let a = (this.radius + target.radius) * (this.radius + target.radius);
+
     return distance <= a;
 };
 
 Entity.prototype.doCollision = function (target) {
-    this.speed = target.speed = 0;
+    let distance = this.position.distanceTo(target.position);
+    innerHTML("#en1").append(" "+ distance);
+
+    this.angle = Math.floor(this.angle / distance);
+
+    this.cols++;
+
+    if(!this.cols){
+        this.backgroundColor = "white";
+        this.cols = 0;
+    }else if(this.cols > 1 && this.cols < 5){
+        this.backgroundColor = "red";
+    }else if(this.cols > 5 && this.cols < 10){
+        this.backgroundColor = "blue";
+    }else if(this.cols > 100){
+        this.backgroundColor = "black";
+    }
 };
 
 function collision(entity) {
@@ -119,3 +134,28 @@ function collideEntities(en1, en2) {
     en2.setNextX(en2.nextX += en2.velocityX);
     en2.setNextY(en2.nextY += en2.velocityY);
 }
+
+function Position(x, y) {
+    this.x = x;
+    this.y = y;
+
+    /** @param target {Position | {x: number, y: number}}*/
+    this.distanceTo = function (target) {
+        let a = this.x - target.x;
+        let b = this.y - target.y;
+        return Math.sqrt(a*a+b*b);
+    };
+}
+
+/** @param position {Position}*/
+function Vector(position) {
+    this.direction = position;
+}
+
+Vector.from = function(angle, speed){
+    let radians = this.angle * Math.PI / 180;
+    let x = Math.floor(Math.cos(radians) * this.speed);
+    let y = Math.floor(Math.sin(radians) * this.speed);
+
+    return new Vector(new Position(x, y));
+};
