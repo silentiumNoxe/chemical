@@ -59,7 +59,7 @@ function loop() {
         canvas.closePath();
         canvas.stroke();
 
-        entity.move();
+        entity.move(Vector.fromAngleSpeed(entity.angle, entity.speed));
 
         if(entity.position.x > window.border.x || entity.position.y > window.border.y){
             window.entityArray.splice(i, 1);
@@ -155,4 +155,9 @@ function innerHTML(selector) {
             document.querySelector(selector).innerHTML = html;
         }
     }
+}
+
+function debug(mark, val) {
+    let debug = document.querySelector("#debug");
+    
 }

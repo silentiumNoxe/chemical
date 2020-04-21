@@ -16,29 +16,11 @@ function Entity(name) {
     this.age = 2000;
 }
 
-Entity.prototype.move = function () {
-    this.vector = Vector.from(this.angle, this.speed);
-
+Entity.prototype.move = function (vector) {
     // collision(this);
 
     this.position =
-        new Position(this.position.x+this.vector.direction.x, this.position.y+this.vector.direction.y);
-};
-
-Entity.prototype.setX = function (val) {
-    this.x = Number(val).toFixed(0);
-};
-
-Entity.prototype.setY = function (val) {
-    this.y = Number(val).toFixed(0);
-};
-
-Entity.prototype.setNextX = function (val) {
-    this.nextX = Number(val).toFixed(0);
-};
-
-Entity.prototype.setNextY = function (val) {
-    this.nextY = Number(val).toFixed(0);
+        new Position(this.position.x+vector.direction.x, this.position.y+vector.direction.y);
 };
 
 Entity.prototype.setAngle = function (val) {
@@ -134,28 +116,3 @@ function collideEntities(en1, en2) {
     en2.setNextX(en2.nextX += en2.velocityX);
     en2.setNextY(en2.nextY += en2.velocityY);
 }
-
-function Position(x, y) {
-    this.x = x;
-    this.y = y;
-
-    /** @param target {Position | {x: number, y: number}}*/
-    this.distanceTo = function (target) {
-        let a = this.x - target.x;
-        let b = this.y - target.y;
-        return Math.sqrt(a*a+b*b);
-    };
-}
-
-/** @param position {Position}*/
-function Vector(position) {
-    this.direction = position;
-}
-
-Vector.from = function(angle, speed){
-    let radians = this.angle * Math.PI / 180;
-    let x = Math.floor(Math.cos(radians) * this.speed);
-    let y = Math.floor(Math.sin(radians) * this.speed);
-
-    return new Vector(new Position(x, y));
-};
