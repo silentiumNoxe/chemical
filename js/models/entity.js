@@ -13,7 +13,7 @@ function Entity(name) {
 
     this.backgroundColor = null;
 
-    this.age = 2000; // number of frames after which entity should be removed
+    this.age = 20000; // number of frames after which entity should be removed
 }
 
 Entity.prototype.updateState = function(){

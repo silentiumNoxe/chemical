@@ -6,13 +6,15 @@ window.addEventListener("DOMContentLoaded", () => {
     canvasElement.width = window.innerWidth;
     canvasElement.height = window.innerHeight;
 
+    window.canvasContext = canvasElement.getContext("2d");
+
     window.camera = new Camera(canvasElement);
-    window.camera.x = 3000;
-    window.camera.y = 2000;
+    window.camera.x = 0;
+    window.camera.y = 0;
 
     window.entityArray = [];
     /** @type Entity[]*/window.entityArray = factoryEntities([
-        {name: "H", radius: 30, position: new Position(1000, 1000), backgroundColor: "white", speed: 10, angle: 60},
+        {name: "H", radius: 50, position: new Position(1000, 1000), backgroundColor: "white", speed: 1, angle: 60},
         // {angle: 90, position: new Position(400, 200)}
     ]);
 
@@ -23,13 +25,13 @@ function loop() {
     let startTime = window.performance.now();
 
     let canvasElement = document.querySelector("canvas");
-    let canvas = canvasElement.getContext("2d");
+    let canvas = window.canvasContext;
 
     //clear canvas
     canvas.clearRect(0,0, canvasElement.width, canvasElement.height);
 
     //scale index
-    let scale = camera.scale / 10;
+    let scale = window.camera.scale / 10;
 
     canvas.font = 10*scale+"px Arial";
     canvas.textAlign = "center";
@@ -62,7 +64,7 @@ function loop() {
     // console.dir(entityArray);
     innerHTML("#avrLife").set("average life: "+Math.floor(sumLife/entityArray.length));
 
-    // innerHTML("#en1").set(JSON.stringify(entityArray[0]));
+    innerHTML("#en1").set(JSON.stringify(entityArray[0].position));
     // innerHTML("#en2").set(JSON.stringify(entityArray[1]));
 
     generateRandomEntities(document.querySelector("#quantityEntities").value);
@@ -74,7 +76,7 @@ function loop() {
 }
 
 function drawEntity(entity, canvas) {
-    let scale = camera.scale / 10;
+    let scale = window.camera.scale / 10;
 
     canvas.beginPath();
 
@@ -119,10 +121,6 @@ function factoryEntities(entities) {
         array.push(Object.assign(new Entity(), buf));
     }
     return array;
-}
-
-function nextFrame() {
-    loop();
 }
 
 function switchFBF(button) {
