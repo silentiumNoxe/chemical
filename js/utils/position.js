@@ -1,3 +1,7 @@
+/**
+ * @param x {number}
+ * @param y {number}
+ * */
 function Position(x, y) {
     this.x = x;
     this.y = y;

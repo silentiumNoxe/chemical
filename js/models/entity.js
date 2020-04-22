@@ -1,26 +1,42 @@
 function Entity(name) {
     this.position = null;
 
-    this.nextX = this.x;
-    this.nextY = this.y;
+    this.radius = 1; // entity have circle shape
 
-    this.radius = 1;
-    this.speed = 0;
-    this.angle = 0;
+    /** pixels/frames */
+    this.speed = 0; // pixels/frame
+    this.angle = 0; // offset of move
+
     this.mass = 1;
 
     this.name = name;
 
     this.backgroundColor = null;
 
-    this.age = 2000;
+    this.age = 2000; // number of frames after which entity should be removed
 }
 
+Entity.prototype.updateState = function(){
+    if(this.position.x > window.border.x || this.position.y > window.border.y){
+        this.age = 0;
+    }
+
+    if(this.position.x < 0 || this.position.y < 0){
+        this.age = 0;
+    }
+
+    // collision(this);
+
+    this.move(Vector.fromAngleSpeed(this.angle, this.speed));
+};
+
+/** @param vector {Vector}*/
 Entity.prototype.move = function (vector) {
     // collision(this);
 
-    this.position =
-        new Position(this.position.x+vector.direction.x, this.position.y+vector.direction.y);
+    let x = this.position.x+vector.direction.x;
+    let y = this.position.y+vector.direction.y;
+    this.position = new Position(x, y);
 };
 
 Entity.prototype.setAngle = function (val) {
@@ -69,6 +85,7 @@ function collision(entity) {
     for(let k = 0; k < entityArray.length; k++){
         let testEntity = entityArray[k];
         if(testEntity === entity) continue;
+
         if(entity.checkCollisionWith(testEntity)){
             entity.doCollision(testEntity);
         }

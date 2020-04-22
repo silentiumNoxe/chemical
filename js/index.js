@@ -12,8 +12,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
     window.entityArray = [];
     /** @type Entity[]*/window.entityArray = factoryEntities([
-        {name: "H", radius: 100, position: new Position(300, 200), backgroundColor: "white", speed: 3, angle: 60},
-        {angle: 90, position: new Position(400, 200)}
+        {name: "H", radius: 30, position: new Position(1000, 1000), backgroundColor: "white", speed: 10, angle: 60},
+        // {angle: 90, position: new Position(400, 200)}
     ]);
 
     window.requestAnimationFrame(loop);
@@ -39,37 +39,8 @@ function loop() {
     for(let i = 0; i < window.entityArray.length; i++){
         /** @type Entity*/let entity = window.entityArray[i];
 
-        canvas.beginPath();
+        drawEntity(entity, canvas);
 
-        //draw circle
-        canvas.arc((entity.position.x+window.camera.x) * scale, (entity.position.y+window.camera.y) * scale, entity.radius*scale, 0, 2 * Math.PI);
-        if(entity.backgroundColor != null){
-            canvas.fillStyle = canvas.strokeStyle = entity.backgroundColor;
-            if(canvas.strokeStyle === "#fff" || canvas.strokeStyle === "#ffffff" || canvas.strokeStyle === "white")
-                canvas.strokeStyle = "#000";
-            canvas.fill();
-        }
-
-        //inner symbol
-        if(entity.name != null && window.camera.scale > 7) {
-            canvas.fillStyle = "#000";
-            canvas.fillText(entity.name, (entity.x + window.camera.x) * scale, (entity.y + window.camera.y) * scale + 4 * (window.camera.scale / 10));
-        }
-
-        canvas.closePath();
-        canvas.stroke();
-
-        entity.move(Vector.fromAngleSpeed(entity.angle, entity.speed));
-
-        if(entity.position.x > window.border.x || entity.position.y > window.border.y){
-            window.entityArray.splice(i, 1);
-        }
-
-        if(entity.position.x < 0 || entity.position.y < 0){
-            window.entityArray.splice(i, 1);
-        }
-
-        // entity.setAngle(entity.angle+2);
         if(entity.age === 0){
             entityArray.splice(i,  1);
         }else {
@@ -77,7 +48,7 @@ function loop() {
             sumLife += entity.age;
         }
 
-        // collide(entity);
+        entity.updateState();
     }
 
     //debug information
@@ -102,11 +73,36 @@ function loop() {
     }
 }
 
+function drawEntity(entity, canvas) {
+    let scale = camera.scale / 10;
+
+    canvas.beginPath();
+
+    //draw circle
+    canvas.arc((entity.position.x+window.camera.x) * scale, (entity.position.y+window.camera.y) * scale, entity.radius*scale, 0, 2 * Math.PI);
+    if(entity.backgroundColor != null){
+        canvas.fillStyle = canvas.strokeStyle = entity.backgroundColor;
+        if(canvas.strokeStyle === "#fff" || canvas.strokeStyle === "#ffffff" || canvas.strokeStyle === "white")
+            canvas.strokeStyle = "#000";
+        canvas.fill();
+    }
+
+    //inner symbol
+    if(entity.name != null && window.camera.scale > 7) {
+        canvas.fillStyle = "#000";
+        canvas.fillText(entity.name, (entity.position.x + window.camera.x) * scale, (entity.position.y + window.camera.y) * scale + 4 * (window.camera.scale / 10));
+    }
+
+    canvas.closePath();
+    canvas.stroke();
+}
+
 function generateRandomEntities(max) {
     while (window.entityArray.length < max){
         let entity = new Entity();
-        entity.x = Math.floor(Math.random() * window.border.x);
-        entity.y = Math.floor(Math.random() * window.border.y);
+        let x = Math.floor(Math.random() * window.border.x);
+        let y = Math.floor(Math.random() * window.border.y);
+        entity.position = new Position(x, y);
         entity.backgroundColor = "white";
         entity.speed = Math.floor(Math.random() * 20);
         entity.angle = Math.floor(Math.random() * 360);
