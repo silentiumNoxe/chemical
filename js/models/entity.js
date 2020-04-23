@@ -1,56 +1,44 @@
-function Entity(name) {
-    this.position = null;
+class Entity{
 
-    this.radius = 1; // entity have circle shape
+    constructor(){
+        this.pos = new Pos(0, 0);
+        this.radius = 1;
+        this.velocity = 0;
+        this._vAngle = 0;
+        this.mass = 1;
+        this.color = "white";
+    }
 
-    /** pixels/frames */
-    this.speed = 0; // pixels/frame
-    this.angle = 0; // offset of move
+    move(){
+        if(this.velocity === 0) return;
 
-    this.mass = 1;
+        let radians = this._vAngle * Math.PI / 180;
+        let x = Math.cos(radians) * this.velocity;
+        let y = Math.sign(radians) * this.velocity;
 
-    this.name = name;
+        this.pos = new Pos(x, y);
+    }
 
-    this.backgroundColor = null;
+    get vAngle(){
+        return this._vAngle;
+    }
 
-    this.age = 20000; // number of frames after which entity should be removed
+    set vAngle(val){
+        if(val >= 360){
+            val -= 360;
+            this.vAngle(val);
+            return;
+        }
+
+        if(val < 0){
+            val += 360;
+            this.vAngle(val);
+            return;
+        }
+
+        this._vAngle = val;
+    }
 }
-
-Entity.prototype.updateState = function(){
-    if(this.position.x > window.border.x || this.position.y > window.border.y){
-        this.age = 0;
-    }
-
-    if(this.position.x < 0 || this.position.y < 0){
-        this.age = 0;
-    }
-
-    // collision(this);
-
-    this.move(Vector.fromAngleSpeed(this.angle, this.speed));
-};
-
-/** @param vector {Vector}*/
-Entity.prototype.move = function (vector) {
-    // collision(this);
-
-    let x = this.position.x+vector.direction.x;
-    let y = this.position.y+vector.direction.y;
-    this.position = new Position(x, y);
-};
-
-Entity.prototype.setAngle = function (val) {
-    let max = 360;
-    while (val > max) {
-        val -= max;
-    }
-
-    while (val < 0){
-        val += max;
-    }
-
-    this.angle = val;
-};
 
 Entity.prototype.checkCollisionWith = function (target) {
     let distance = this.position.distanceTo(target.position);

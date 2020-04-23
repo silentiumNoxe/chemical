@@ -1,5 +1,6 @@
 window.FBFMode = false;//frame-by-frame
 window.border = {x: 10000, y: 5000};
+window.entities = [];
 
 window.addEventListener("DOMContentLoaded", () => {
     let canvasElement = document.querySelector("canvas");
@@ -11,12 +12,6 @@ window.addEventListener("DOMContentLoaded", () => {
     window.camera = new Camera(canvasElement);
     window.camera.x = 0;
     window.camera.y = 0;
-
-    window.entityArray = [];
-    /** @type Entity[]*/window.entityArray = factoryEntities([
-        {name: "H", radius: 50, position: new Position(1000, 1000), backgroundColor: "white", speed: 1, angle: 60},
-        // {angle: 90, position: new Position(400, 200)}
-    ]);
 
     window.requestAnimationFrame(loop);
 });
@@ -75,10 +70,16 @@ function loop() {
     }
 }
 
+/**
+ * @param entity {Entity}
+ * @param canvas {CanvasRenderingContext2D}
+ * */
 function drawEntity(entity, canvas) {
     let scale = window.camera.scale / 10;
 
     canvas.beginPath();
+
+    entity.radius
 
     //draw circle
     canvas.arc((entity.position.x+window.camera.x) * scale, (entity.position.y+window.camera.y) * scale, entity.radius*scale, 0, 2 * Math.PI);
@@ -100,16 +101,16 @@ function drawEntity(entity, canvas) {
 }
 
 function generateRandomEntities(max) {
-    while (window.entityArray.length < max){
+    while (window.entities.length < max){
         let entity = new Entity();
         let x = Math.floor(Math.random() * window.border.x);
         let y = Math.floor(Math.random() * window.border.y);
-        entity.position = new Position(x, y);
-        entity.backgroundColor = "white";
-        entity.speed = Math.floor(Math.random() * 20);
+        entity.pos = new Pos(x, y);
+        entity.color = "white";
+        entity.velocity = Math.floor(Math.random() * 20);
         entity.angle = Math.floor(Math.random() * 360);
         entity.radius = Math.floor(Math.random() * (100 - 20) + 20);
-        window.entityArray.push(entity);
+        window.entities.push(entity);
     }
 }
 
