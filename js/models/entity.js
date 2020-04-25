@@ -1,4 +1,4 @@
-class Entity{
+class Proton{
 
     constructor(){
         this.pos = new Pos(0, 0);

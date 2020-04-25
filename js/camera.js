@@ -1,4 +1,45 @@
-function Camera(canvasElement){
+class Camera {
+
+    static SCALE_MAX = 100;
+    static SCALE_MIN = 1;
+
+    constructor(){
+        this.pos = new Pos(0, 0);
+
+        this.scale = 1;
+    }
+
+    /** @param context {HTMLCanvasElement}*/
+    configureCanvas(context){
+        const cameraContext = this;
+        const mouse = {
+            movePos: null,
+            clickDown: null,
+            clickUp: null,
+            clicked: false
+        };
+
+        context.onmousemove = function (event) {
+            if(mouse.clicked){
+                cameraContext.pos = mouse.movePos;
+            }
+
+            mouse.movePos = new Pos(event.pageX, event.pageY);
+        };
+
+        context.onmousedown = function (event) {
+            mouse.clicked = true;
+            mouse.clickDown = new Pos(event.pageX, event.pageY);
+        };
+
+        context.onmouseup = context.onmouseleave = function (event) {
+            mouse.clicked = false;
+            mouse.clickUp = new Pos(event.pageX, event.pageY);
+        }
+    }
+}
+
+function CameraA(canvasElement){
     this.x = 0;
     this.y = 0;
 
